@@ -1,0 +1,57 @@
+# Example YAML to get you started quickly.
+# Be aware that YAML has indentation based scoping.
+# Code completion support is available so start typing for available options.
+swagger: '2.0'
+
+info:
+  version: "1.0.0"
+  title: MyTasks API
+
+host: localhost:5000
+
+basePath: /v1/
+
+schemes:
+  - http
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+  
+paths:
+  /:
+    get:
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        Gets open `Tasks` objects.
+        Optional query param of **size** determines
+        size of returned array
+      parameters:
+        -
+          name: size
+          in: query
+          description: Size of array
+          required: true
+          type: number
+          format: double
+      responses:
+        200:
+          description: Successful response
+          schema:
+            title: ArrayOfTasks
+            type: array
+            items:
+              title: Task
+              type: object
+              properties:
+                id:
+                  type: integer
+                description:
+                  type: string
+                completed:
+                  type: boolean
+                dueDate:
+                  type: string
+                  format: date
+                  
