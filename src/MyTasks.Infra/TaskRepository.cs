@@ -39,14 +39,34 @@ namespace MyTasks.Infra
         public Task Save(Task task)
         {
             using (var conn = new NpgsqlConnection(_connectionString))
-            {            
-                conn.Open();                
-                task.Id = conn.Query<int>(@"INSERT INTO task (title, description, completed, created ) values 
-                                                (@title, @description, @completed, @created) RETURNING id",
-                    task).Single();
+            {       
+                System.Console.WriteLine(task.Id > 0);     
+                conn.Open();  
+                if(task.Id == 0)
+                {              
+                    task.Id = conn.Query<int>(@"INSERT INTO task (title, description, completed, created ) values 
+                                                (@title, @description, @completed, @created) RETURNING id", task).Single();
+                }
+                else
+                {                    
+                    conn.Execute(@"UPDATE task SET title = @title, 
+                                                  description = @description,
+                                                  completed = @completed,
+                                                  created = @created
+                                            WHERE Id = @id", task);
+                }
             }
 
             return task;
+        }
+
+        public void Delete(Task task)
+        {
+            using (var conn = new NpgsqlConnection(_connectionString))
+            {            
+                conn.Open();                
+                conn.Execute("DELETE FROM Task WHERE Id = @Id", task);
+            }
         }
     }
 }

@@ -47,14 +47,42 @@ namespace MyTasks.Api.Controllers
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        public IActionResult Put(int id, MyTasks.Domain.Task task)
         {
+            _repository.Save(task);
+
+            return Ok(task);
+        }
+
+        // PUT api/values/5
+        [HttpPut("Completed/{id}")]
+        public IActionResult Completed(int id)
+        {
+            MyTasks.Domain.Task task = _repository.GetById(id);
+
+            System.Console.WriteLine(task.Id);
+            if(task == null)
+                return NotFound();
+
+            task.Completed = !task.Completed;
+
+            _repository.Save(task);
+
+            return Ok(task);
         }
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
+            MyTasks.Domain.Task task = _repository.GetById(id);
+
+            if(task == null)
+                return NotFound();
+
+            _repository.Delete(task);
+
+            return Ok();
         }
     }
 }

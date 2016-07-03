@@ -10,5 +10,6 @@ namespace MyTasks.Domain
         IEnumerable<Task> GetAll();
         Task GetById(int id);
         Task Save(Task task);
+        void Delete(Task task);
     }
 }
