@@ -8,11 +8,11 @@ using MyTasks.Domain;
 namespace MyTasks.Api.Controllers
 {
     [Route("api/[controller]")]
-    public class ValuesController : Controller
+    public class TasksController : Controller
     {
         private ITaskRepository _repository;
 
-        public ValuesController(ITaskRepository repository)
+        public TasksController(ITaskRepository repository)
         {
             _repository = repository;
         }
@@ -26,9 +26,14 @@ namespace MyTasks.Api.Controllers
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public IActionResult Get(int id)
         {
-            return "value";
+            MyTasks.Domain.Task task = _repository.GetById(id);
+
+            if(task == null)
+                return NotFound();
+
+            return Ok(_repository.GetById(id));
         }
 
         // POST api/values

@@ -30,11 +30,16 @@ namespace MyTasks.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Register Configuration
+            services.Add(new ServiceDescriptor(typeof(IConfigurationRoot), Configuration));
+
             // Add framework services.
             services.AddMvc();
 
             // Add application services.
             services.AddTransient<ITaskRepository, TaskRepository>();
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

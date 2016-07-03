@@ -1,0 +1,6 @@
+CREATE TABLE TASK(
+    ID serial PRIMARY KEY,
+    TITLE varchar(50),
+    DESCRIPTION varchar(1000), 
+    COMPLETED BOOLEAN
+)

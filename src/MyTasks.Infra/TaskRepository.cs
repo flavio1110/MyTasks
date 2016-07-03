@@ -1,39 +1,44 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using MyTasks.Domain;
-using MySql.Data.MySqlClient.MySqlConnection;
+using Npgsql;
+using Dapper;
+using Microsoft.Extensions.Configuration;
 
 namespace MyTasks.Infra
 {
-    public class TaskRepository : ITaskRepsository
+    public class TaskRepository : ITaskRepository
     {
-        public IEnumarable<Task> GetAll()
+        private string _connectionString;
+
+        public TaskRepository(IConfigurationRoot configuration)
         {
-            string myConnectionString;
+            _connectionString = configuration.GetConnectionString("DefaultConnection");            
+        }
 
-            string myConnectionString;
-
-            myConnectionString = "server=127.0.0.1;uid=root;" +
-                "pwd=12345;database=MyArboretum;";
-
-            try
-            {
-                conn = new MySql.Data.MySqlClient.MySqlConnection();
-                conn.ConnectionString = myConnectionString;
-                conn.Open();
+        public IEnumerable<Task> GetAll()
+        {
+            using (var conn = new NpgsqlConnection(_connectionString))
+            {            
+                conn.Open();                
+                return conn.Query<Task>(@"SELECT Id, Title, Description, Completed, Created FROM Task");
             }
-            catch (MySql.Data.MySqlClient.MySqlException ex)
-            {
-                MessageBox.Show(ex.Message);
+        }
+
+        public Task GetById(int id)
+        {
+            using (var conn = new NpgsqlConnection(_connectionString))
+            {            
+                conn.Open();                
+                return conn.Query<Task>(@"SELECT Id, Title, Description, Completed, Created FROM Task WHERE Id = @Id",
+                    new { Id = id}).FirstOrDefault();
             }
+        }
 
-
-            yield return new Task(){ Id = 1, Description = "do x 1" };
-            yield return new Task(){ Id = 2, Description = "do x 2" };
-            yield return new Task(){ Id = 3, Description = "do x 3" };
-            yield return new Task(){ Id = 4, Description = "do x 4" };
+        public Task Save(Task task)
+        {
+            return null;
         }
     }
 }

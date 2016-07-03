@@ -8,5 +8,7 @@ namespace MyTasks.Domain
     public interface ITaskRepository
     {
         IEnumerable<Task> GetAll();
+        Task GetById(int id);
+        Task Save(Task task);
     }
 }
