@@ -22,7 +22,7 @@ namespace MyTasks.Infra
             using (var conn = new NpgsqlConnection(_connectionString))
             {            
                 conn.Open();                
-                return conn.Query<Task>(@"SELECT Id, Title, Description, Completed, Created FROM Task");
+                return conn.Query<Task>("SELECT Id, Title, Description, Completed, Created FROM Task");
             }
         }
 
@@ -31,14 +31,22 @@ namespace MyTasks.Infra
             using (var conn = new NpgsqlConnection(_connectionString))
             {            
                 conn.Open();                
-                return conn.Query<Task>(@"SELECT Id, Title, Description, Completed, Created FROM Task WHERE Id = @Id",
+                return conn.Query<Task>("SELECT Id, Title, Description, Completed, Created FROM Task WHERE Id = @Id",
                     new { Id = id}).FirstOrDefault();
             }
         }
 
         public Task Save(Task task)
         {
-            return null;
+            using (var conn = new NpgsqlConnection(_connectionString))
+            {            
+                conn.Open();                
+                task.Id = conn.Query<int>(@"INSERT INTO task (title, description, completed, created ) values 
+                                                (@title, @description, @completed, @created) RETURNING id",
+                    task).Single();
+            }
+
+            return task;
         }
     }
 }

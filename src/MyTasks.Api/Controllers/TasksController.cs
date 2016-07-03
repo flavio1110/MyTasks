@@ -38,8 +38,11 @@ namespace MyTasks.Api.Controllers
 
         // POST api/values
         [HttpPost]
-        public void Post([FromBody]string value)
+        public IActionResult Post(MyTasks.Domain.Task task)
         {
+            _repository.Save(task);
+
+            return Ok(task);
         }
 
         // PUT api/values/5
